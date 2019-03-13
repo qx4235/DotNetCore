@@ -15,7 +15,7 @@ namespace DotNetCoreWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton< IUserService, UserService>();
-            services.AddSingleton< IUserRepo, IUserRepo>();
+//            services.AddSingleton< IUserRepo, IUserRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,9 +26,15 @@ namespace DotNetCoreWeb
                 app.UseDeveloperExceptionPage();
             }
 
+            app.Use(async (context,func) =>
+            {
+                var service = app.ApplicationServices.GetRequiredService<IUserService>();
+                await context.Response.WriteAsync(service.GetRandom() + "\r\n");
+            });
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                var service = app.ApplicationServices.GetRequiredService<IUserService>();
+                await context.Response.WriteAsync(service.GetRandom() + "\r\n");
             });
         }
     }
