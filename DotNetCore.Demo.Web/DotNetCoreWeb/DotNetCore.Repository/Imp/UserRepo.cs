@@ -5,10 +5,10 @@ namespace DotNetCore.Repository.Imp
 {
     public class UserRepo:IUserRepo
     {
-
+        private readonly int _rndNum = new Random().Next(100000000);
         public string GetUserName()
         {
-            return new Random().Next(1, 10000000).GetHashCode().ToString();
+            return $"repo:{_rndNum}";
         }
     }
 }

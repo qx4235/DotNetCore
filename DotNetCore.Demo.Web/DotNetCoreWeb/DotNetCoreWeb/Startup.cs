@@ -1,4 +1,5 @@
-﻿using DotNetCore.Repository.Interface;
+﻿using DotNetCore.Repository.Imp;
+using DotNetCore.Repository.Interface;
 using DotNetCore.Service.Imp;
 using DotNetCore.Service.Interface;
 using Microsoft.AspNetCore.Builder;
@@ -14,8 +15,8 @@ namespace DotNetCoreWeb
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton< IUserService, UserService>();
-//            services.AddSingleton< IUserRepo, IUserRepo>();
+            services.AddScoped< IUserService, UserService>();
+            services.AddScoped< IUserRepo, UserRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,16 +27,25 @@ namespace DotNetCoreWeb
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context,func) =>
-            {
-                var service = app.ApplicationServices.GetRequiredService<IUserService>();
-                await context.Response.WriteAsync(service.GetRandom() + "\r\n");
-            });
             app.Run(async (context) =>
             {
+                var types = typeof(IUserService).Assembly.GetTypes();
+                foreach (var type in types)
+                {
+                    await context.Response.WriteAsync($"{type.Name}\r\n");
+                }
+
+
                 var service = app.ApplicationServices.GetRequiredService<IUserService>();
-                await context.Response.WriteAsync(service.GetRandom() + "\r\n");
+                await context.Response.WriteAsync(service.GetUserName() + "\r\n<br>"+service.GetRandom());
+                service = app.ApplicationServices.GetRequiredService<IUserService>();
+                await context.Response.WriteAsync("\r\n<br>" + service.GetUserName() + "\r\n<br>" + service.GetRandom());
             });
+//            app.Run(async (context) =>
+//            {
+//                var service = app.ApplicationServices.GetRequiredService<IUserService>();
+//                await context.Response.WriteAsync(service.GetUserName() + "\r\n");
+//            });
         }
     }
 }

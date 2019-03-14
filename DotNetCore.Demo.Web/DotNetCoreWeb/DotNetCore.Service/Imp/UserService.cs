@@ -6,22 +6,25 @@ namespace DotNetCore.Service.Imp
 {
     public class UserService:IUserService
     {
-//        private readonly IUserRepo _userRepo;
-//
-//        public UserService(IUserRepo userRepo)
-//        {
-//            _userRepo = userRepo;
-//        }
+        private readonly IUserRepo _userRepo;
+
+        public UserService(IUserRepo userRepo)
+        {
+            _userRepo = userRepo;
+        }
+private readonly int _rndNum=new Random().Next(100000000);
+
+//        public IUserRepo UserRepo { get; set; }
 
         public string GetUserName()
         {
-//            return _userRepo.GetUserName();
-            return "abc";
+                        return _userRepo.GetUserName();
+//            return "abc";
         }
 
         public string GetRandom()
         {
-            return new Random().Next(1, 10000000).GetHashCode().ToString();
+            return $"userService:{_rndNum}";
         }
 
 
